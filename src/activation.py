@@ -8,6 +8,11 @@ def sigmoid(x):
 def sigmoid_dash(x):
     return x * (1 - x)
 
+def tanh(x):
+    return np.tanh(x)
+
+def sech_squared(x):
+    return (np.cosh(x) ** 2) ** -1
 
 def error(exp, got, _in):
     err = exp - got
