@@ -53,7 +53,7 @@ def write_cache(ls, file: str):
 def main():
     for i in range(1, 5):
         print(f"Loading data set {i} ...")
-        data, crack = load_data()
+        data, crack = load_data(i)
 
         rate = 0.01
         epochs = 5
