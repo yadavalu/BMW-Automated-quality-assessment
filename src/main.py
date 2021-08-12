@@ -12,13 +12,13 @@ def load_data(index):
 
     for file in os.listdir(f"data/{index}/+/"):
         images.append(
-            imread("data/{index}/+/" + file).astype("float32") / 255
+            imread(f"data/{index}/+/" + file).astype("float32") / 255
         )
         crack.append(1)
 
     for file in os.listdir(f"data/{index}/-/"):
         images.append(
-            imread("data/{index}/-/" + file).astype("float32") / 255
+            imread(f"data/{index}/-/" + file).astype("float32") / 255
         )
         crack.append(-1)
 
