@@ -7,26 +7,18 @@ import numpy as np
 import activation as a
 
 
-def load_data():
+def load_data(index):
     images, crack = [], []
 
-    for file in os.listdir("data/Positive"):
+    for file in os.listdir(f"data/{index}/+/"):
         images.append(
-            #np.asarray(
-            #    Image.open("data/Positive/" + file),
-            #    dtype="float32"
-            #) / 255
-            imread("data/Positive/" + file).astype("float32") / 255
+            imread("data/{index}/+/" + file).astype("float32") / 255
         )
         crack.append(1)
 
-    for file in os.listdir("data/Negative"):
+    for file in os.listdir(f"data/{index}/-/"):
         images.append(
-            #np.asarray(
-            #    Image.open("data/Negative/" + file)
-            #    dtype="float32"
-            #).astype("float32") / 255
-            imread("data/Negative/" + file).astype("float32") / 255
+            imread("data/{index}/-/" + file).astype("float32") / 255
         )
         crack.append(-1)
 
@@ -59,60 +51,61 @@ def write_cache(ls, file: str):
     f.close()
 
 def main():
-    print("Loading data ...")
-    data, crack = load_data()
-    
-    rate = 0.01
-    epochs = 5
+    for i in range(1, 5):
+        print(f"Loading data set {i} ...")
+        data, crack = load_data()
 
-    if os.path.exists("cache/weights.cache"):
-        print("Caching weights ...")
-        weights = cache("cache/weights.cache")
-    else:
-        print("Generating random weight ...")
-        np.random.seed(0)
-        weights = [
-            np.random.uniform(-1, 1, (50, 227**2)),
-            np.random.uniform(-1, 1, (1, 50)),
-        ]
+        rate = 0.01
+        epochs = 5
 
-    if os.path.exists("cache/bias.cache"):
-        print("Caching bias ...")
-        bias = cache("cache/bias.cache")
-    else:
-        print("Generating random bias ...")
-        np.random.seed(0)
-        bias = [
-            np.zeros((50, 1)),
-            np.zeros((1, 1)),
-        ]
+        if os.path.exists("cache/weights.cache"):
+            print("Caching weights ...")
+            weights = cache("cache/weights.cache")
+        else:
+            print("Generating random weight ...")
+            np.random.seed(0)
+            weights = [
+                np.random.uniform(-1, 1, (50, 227**2)),
+                np.random.uniform(-1, 1, (1, 50)),
+            ]
 
-    for epoch in range(1, epochs + 1):
-        print(f"{epoch = }")
-        correct = 0
-        
-        for d, c in zip(data, crack): 
-            # Forward propagation
-            d.shape += (1,)
-            c.shape += (1,)
+        if os.path.exists("cache/bias.cache"):
+            print("Caching bias ...")
+            bias = cache("cache/bias.cache")
+        else:
+            print("Generating random bias ...")
+            np.random.seed(0)
+            bias = [
+                np.zeros((50, 1)),
+                np.zeros((1, 1)),
+            ]
 
-            h_neuron = a.tanh(weights[0] @ d + bias[0])
-            o_neuron = a.tanh(weights[1] @ h_neuron + bias[1])
+        for epoch in range(1, epochs + 1):
+            print(f"{epoch = }")
+            correct = 0
 
-            error = a.mean_error_function(o_neuron, c)
-            correct += int(c == np.argmax(o_neuron))
+            for d, c in zip(data, crack): 
+                # Forward propagation
+                d.shape += (1,)
+                c.shape += (1,)
 
-            do = o_neuron - c
-            dh = np.transpose(weights[1]) @ do * a.sech_squared(h_neuron)
+                h_neuron = a.tanh(weights[0] @ d + bias[0])
+                o_neuron = a.tanh(weights[1] @ h_neuron + bias[1])
 
-            weights[1] += -rate * do @ np.transpose(h_neuron)
-            bias[1] += -rate * do
+                error = a.mean_error_function(o_neuron, c)
+                correct += int(c == np.argmax(o_neuron))
 
-            weights[0] += -rate * dh @ np.transpose(d)
-            bias[0] += -rate * dh
+                do = o_neuron - c
+                dh = np.transpose(weights[1]) @ do * a.sech_squared(h_neuron)
 
-        print(f"Neural network accuracy = {round(correct * 100/40000, 2)}")
-        print(f"Correct = {correct}/40000")
+                weights[1] += -rate * do @ np.transpose(h_neuron)
+                bias[1] += -rate * do
+
+                weights[0] += -rate * dh @ np.transpose(d)
+                bias[0] += -rate * dh
+
+            print(f"Neural network accuracy = {round(correct * 100/40000, 2)}")
+            print(f"Correct = {correct}/40000")
 
 if __name__ == "__main__":
     main()
