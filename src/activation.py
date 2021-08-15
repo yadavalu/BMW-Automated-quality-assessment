@@ -9,7 +9,7 @@ def sigmoid(x):
 def sigmoid_dash(x):
     return x * (1 - x)
 
-def tanh_(x):
+def tanh(x):
     return (e ** x - e ** (-x))/(e ** x + e ** (-x))
 
 def sech_squared(x):
