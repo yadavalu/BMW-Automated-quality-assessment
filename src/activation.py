@@ -1,18 +1,19 @@
 import numpy as np
 from PIL import Image
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+e = 2.718281828
 
+def sigmoid(x):
+    return 1 / (1 + e ** (-x))
 
 def sigmoid_dash(x):
     return x * (1 - x)
 
-def tanh(x):
-    return np.tanh(x)
+def tanh_(x):
+    return (e ** x - e ** (-x))/(e ** x + e ** (-x))
 
 def sech_squared(x):
-    return (np.cosh(x) ** 2) ** -1
+    return ((e ** x + e ** (-x)) ** 2) ** -1
 
 def error(exp, got, _in):
     err = exp - got
