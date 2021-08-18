@@ -92,7 +92,7 @@ def main():
                 h_neuron = a.tanh(weights[0] @ d + bias[0])
                 o_neuron = a.tanh(weights[1] @ h_neuron + bias[1])
 
-                error = a.mean_error_function(o_neuron, c)
+                error = a.mean_error_function(o_neuron, c, a.tanh)
                 correct += int(c == np.argmax(o_neuron))
 
                 do = o_neuron - c
